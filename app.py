@@ -26,7 +26,7 @@ def index():
 
 
 
-    ##------------Posting 
+##------------Posting 
 @app.route('/post_tweet', methods=['POST'])
 def post_tweet():
     tweet_text = request.form.get('tweet')
@@ -50,8 +50,23 @@ def post_tweet():
     
 
 
+
+YOUR_TOKEN_ABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"stateMutability":"payable","type":"fallback"},{"inputs":[],"name":"implementation","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"stateMutability":"payable","type":"receive"}]
+
+
+##------------Wallet 
 w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/567987522f034d2ab9a21522cb3ed808'))
 
+@app.route('/verify_token', methods=['POST'])
+def verify_token():
+    address = request.form.get('address')
+    token_contract_address = '0x0a45f13B4934493755E9Cd3C3F4B086f2B2C8600'
+    token_contract = w3.eth.contract(address=token_contract_address, abi=YOUR_TOKEN_ABI)
+    balance = token_contract.functions.balanceOf(address).call()
+    if balance > 0:
+        return jsonify(status="success")
+    else:
+        return jsonify(status="error", message="No token found for this address")
 
 
 

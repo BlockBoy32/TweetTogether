@@ -6,15 +6,67 @@
     <title>Twitter Interface</title>
 </head>
 <body>
+
+    <button id="connectWallet">Connect Wallet</button>
+
     <form action="/post_tweet" method="post" id="tweetForm">
         <textarea name="tweet" id="tweetText" cols="30" rows="5" placeholder="What's happening?"></textarea>
         <button type="submit">Tweet</button>
     </form>
+
+    
+
     <a class="twitter-timeline" href="https://twitter.com/TweetTogether_?ref_src=twsrc%5Etfw">Tweets by TweetTogether_</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 
 
     <script>
+        
+        // Connect Wallet
+
+        let userAddress = null;
+
+        document.getElementById('connectWallet').addEventListener('click', async function() {
+            if (window.ethereum) {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    userAddress = accounts[0];
+                    verifyTokenOwnership(userAddress);
+                } catch (error) {
+                    console.error("User denied account access");
+                }
+            } else {
+                console.error("Ethereum provider not detected");
+            }
+        });
+
+        function verifyTokenOwnership(address) {
+            fetch('/verify_token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `address=${address}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Token verified!");
+                    // Here, you can grant access or show hidden content
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+
+
+
+
+
+        
+        // Submitting Tweets
         document.getElementById('tweetForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const tweetText = document.getElementById('tweetText').value;
