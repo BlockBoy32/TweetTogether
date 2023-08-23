@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Interface</title>
+</head>
+<body>
+    <form action="/post_tweet" method="post" id="tweetForm">
+        <textarea name="tweet" id="tweetText" cols="30" rows="5" placeholder="What's happening?"></textarea>
+        <button type="submit">Tweet</button>
+    </form>
+
+    <script>
+        document.getElementById('tweetForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const tweetText = document.getElementById('tweetText').value;
+            fetch('/post_tweet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `tweet=${tweetText}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "error") {
+                    alert(data.message);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
