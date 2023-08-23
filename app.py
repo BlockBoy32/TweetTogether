@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request, jsonify
 import requests
 from requests_oauthlib import OAuth1
-
-app = Flask(__name__)
-
+from web3 import Web3
 import os
 from dotenv import load_dotenv
+
+app = Flask(__name__)
 
 load_dotenv()
 
@@ -50,19 +50,7 @@ def post_tweet():
     
 
 
-    ##------------FEED
-@app.route('/get_recent_tweets')
-def get_recent_tweets():
-    response = requests.get(
-        "https://api.twitter.com/1.1/statuses/user_timeline.json?count=10",
-        auth=auth
-    )
-    data = response.json()
-    if response.status_code == 200:
-        tweets = [{"id": tweet["id_str"], "text": tweet["text"]} for tweet in data]
-        return jsonify(tweets)
-    else:
-        return jsonify([])  # Return an empty list in case of an error
+w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/567987522f034d2ab9a21522cb3ed808'))
 
 
 
